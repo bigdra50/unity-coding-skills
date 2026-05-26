@@ -29,7 +29,7 @@ Add the marketplace and install the plugin:
 
 ```shell
 /plugin marketplace add nowsprinting/unity-coding-skills
-/plugin install unity-coding-skills@unity-coding-skills
+/plugin install unity-coding-skills@nowsprinting-unity-coding-skills
 ```
 
 ### Project-scope installation (team sharing)
@@ -39,7 +39,7 @@ Add the following to your project's `.claude/settings.json` and commit it to you
 ```json
 {
   "extraKnownMarketplaces": {
-    "unity-coding-skills": {
+    "nowsprinting-unity-coding-skills": {
       "source": {
         "source": "github",
         "repo": "nowsprinting/unity-coding-skills"
@@ -47,7 +47,7 @@ Add the following to your project's `.claude/settings.json` and commit it to you
     }
   },
   "enabledPlugins": {
-    "unity-coding-skills@unity-coding-skills": true
+    "unity-coding-skills@nowsprinting-unity-coding-skills": true
   }
 }
 ```

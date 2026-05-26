@@ -1,5 +1,5 @@
 {
-  "name": "unity-coding-skills",
+  "name": "nowsprinting-unity-coding-skills",
   "owner": {
     "name": "Koji Hasegawa",
     "email": "hasegawa@hubsys.co.jp"
@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "unity-coding-skills",
-      "source": ".",
+      "source": "./",
       "description": "Skills and an agent for developing Unity projects with Claude Code — maintainable test design, test-first workflow, coding guidelines, scene editing, and more."
     }
   ]
