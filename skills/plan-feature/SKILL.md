@@ -124,73 +124,33 @@ Assemble the plan file with the following sections:
 
 ## Development Workflow
 
-Paste the **Template** below verbatim as the body of the `## Development Workflow` section in the plan file. Then follow the **Agent Execution Notes** when executing each step.
+Paste the **Template** below verbatim as the body of the `## Development Workflow` section in the plan file.
 
 ### Template
 
 ```markdown
 ### Step 1: Skeleton (Compilable)
 
-- [ ] Create types and public method signatures only — must compile, need not work yet
+- [ ] Create types and method signatures only — must compile, need not work yet. **New methods: empty body only** (no logic, no exceptions; value-returning methods must return a literal default: `0`, `false`, or `null`); **modify: signature only, body unchanged**; **delete: remove the entire method** — test code may fail to compile after modify or delete; fix in Step 2
 
 ### Step 2: Test First
 
-- [ ] Load the `test-writing-guide` skill
-- [ ] Implement test code based on the Test Cases in this plan file
-- [ ] If spec change: update any existing tests affected by the changed spec
-- [ ] Run tests with `/run-tests` and confirm they **fail** (red phase)
-- [ ] Commit test changes to git
+- [ ] Launch `failing-test-writer` agent with: path to this plan file
+- [ ] Check `STATUS:` line in the `failing-test-writer` output — if `STATUS: NG`, **STOP: do not proceed to Step 3**, report unexpected passes to user
+- [ ] Commit test code to git (skeleton is not committed yet — do not include it) — if test code is modified in Step 3 or later, the integrity of Test First is compromised; commit here without fail so the diff remains verifiable
 
 ### Step 3: Implementation
 
 - [ ] Implement product code
 - [ ] Run tests with `/run-tests` and confirm **all pass**
-- [ ] Commit to git
+- [ ] Commit product code to git (includes skeleton from Step 1, and any unavoidable test code changes)
 
 ### Step 4: Refactoring
 
-- [ ] Detect and remove duplicate tests in added/modified test files
+- [ ] Launch `test-deduplicator` agent with: list of test files added or modified in Step 2
 - [ ] Resolve diagnostics at warning or higher for each modified file (`mcp__jetbrains__open_file_in_editor` → `mcp__ide__getDiagnostics` → fix, one file at a time; use `mcp__ide__getDiagnostics` because the Unity editor compiler does not reflect `.editorconfig` severity settings)
 - [ ] Run tests with `/run-tests` and confirm **all pass**
 - [ ] Run `/simplify` to apply quality improvements to the modified code
 - [ ] Run tests with `/run-tests` and confirm **all pass**
-- [ ] Commit to git
+- [ ] Commit all remaining changes to git
 ```
-
-### Agent Execution Notes
-
-#### Step 2: Test First
-
-Launch a `general-purpose` subagent. The main agent itself does **NOT** load `test-writing-guide` — the subagent does.
-
-**Subagent prompt must include:**
-- Path to the plan file (so it can read the Test Cases table)
-- Whether this task is a **spec change** (and if so, the list of existing test files affected by the changed spec)
-- Explicit instruction to load the `test-writing-guide` skill **before** writing or modifying any test code
-- Red-phase expectation: tests must compile and run, but **must fail**
-
-**Subagent responsibilities:**
-1. Load the `test-writing-guide` skill
-2. Implement test code based on the test cases in the plan file
-3. If this task is a spec change, also update any existing tests that are affected by the changed spec
-4. Run the added/modified tests using the `/run-tests` skill, and confirm that they **fail**
-5. Commit the test changes to git
-6. Return a concise summary: which test files were added/modified, and confirmation that they failed as expected
-
-**On subagent failure:**
-- If tests unexpectedly pass (no red phase):
-  - For a **spec change**: assess whether the reason is legitimate (e.g., the original test code was too loose or not testing the right thing). If the reason is judged valid, proceed with the commit and note the finding in the summary. If the reason is unclear, report to the main agent without committing.
-  - For **all other task types**: report to the main agent without committing — main agent decides next action.
-- If compilation fails repeatedly, the subagent should report the blocker rather than loop indefinitely
-
-#### Step 4: Refactoring — Duplicate Test Check
-
-Launch a `general-purpose` subagent to check for duplicate test cases in the test files added or modified in this iteration (plus any existing files in the same test class). Subagent instructions:
-- Read all relevant test files
-- Identify tests with the same condition (setup/input) **and** the same assertion (observation/expected value) — these are true duplicates
-- Do **not** flag tests that share only one of the two (different condition → not a duplicate; same condition but different assertion → not a duplicate)
-- Do **not** merge same-condition tests into a single multi-assert test
-- Do **not** parameterize expected values
-- Even if conditions differ, if tests differ only in arguments passed to the SUT and represent the same equivalence partition, rewrite them as parameterized tests and merge. Never use `if` or `switch` statements inside parameterized tests.
-- If duplicates are found: delete the redundant one (keep the more accurately named test), then commit the removal
-- Return a summary: duplicates found and removed, or "no duplicates found"

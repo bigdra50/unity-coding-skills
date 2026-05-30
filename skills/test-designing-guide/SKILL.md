@@ -170,7 +170,7 @@ After completing Section 4, perform a traceability pass (acceptance tests covera
 
 1. Re-read the original user prompt and extract every stated requirement or behavior.
 2. For each requirement, identify which test case(s) designed in Section 4 cover it.
-   - **UI-layer requirements require UI-level acceptance tests.** When a requirement is stated at the UI layer (it describes on-screen display or a user-facing UI operation), the covering test(s) must be **integration tests or visual verification tests** that exercise actual screen display and UI operations. A unit test that only calls a method does not satisfy a UI-layer requirement. If no integration or visual verification test covers it, record it as a gap and handle it in step 3.
+   - **Requirements must be covered by a same-layer witness test**: the covering test must directly exercise the behavior the requirement describes — not a component that contributes to satisfying it. A requirement about on-screen display or user interaction must be covered by an **integration or visual verification test**; a unit test that only calls a method is not a same-layer witness for a UI-layer requirement. A requirement about method-level behavior may be witnessed by a unit test. If no same-layer test covers a requirement, record it as a gap and handle it in step 3.
 3. For any requirement with no covering test case:
    - Add a test case, **or**
    - Document explicitly why it is not tested (out of scope, untestable by design, etc.)
@@ -205,7 +205,8 @@ Structure by layer:
 **Output markers** — annotations that flag test case categories; append to the specified field only, not the Verification column:
 
 - `(reproduction test)` — append to the **Test Method column** when the test reproduces a reported bug (see Section 3, Reproduction tests)
-- `(acceptance test)` — append to the **Test Method column** when the test covers a UI-layer requirement (see Section 5)
+- `(acceptance test)` — append to the **Test Method column** when the test is the **same-layer witness** (see Section 5) for a requirement stated in the prompt: it must directly exercise the behavior the requirement describes — not a component that contributes to satisfying it. A requirement about on-screen display or user interaction requires an integration or visual verification test; a requirement about method-level behavior may be witnessed by a unit test.
+- `(spec change)` — append to the **Test Method column** ONLY when updating an existing test whose **Verification (observable expected outcome) changes**. A change to the SUT signature/type that requires only arrange/action construction updates (e.g., wrapping `Foo`→`FooRef`) while the expected observable behavior stays identical is NOT a spec change — leave such tests **unmarked** (construction details are a test-writing concern per Section 4, not a design concern). Litmus test: **if the Verification column wording is unchanged, do NOT append `(spec change)`.**
 - `(internal)` — append to the **`##### <MethodName>` section heading** when the test target is an `internal` method
 
 ```markdown

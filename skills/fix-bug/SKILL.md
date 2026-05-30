@@ -24,9 +24,9 @@ This skill must be used **outside plan mode**. Before doing anything else, check
 
 ## Workflow
 
-### Phase 1: Clarify the Bug Report
+### Step 1: Clarify the Bug Report
 
-> **Do not read code files during this phase.** You may only read specs and design docs.
+> **Do not read code files during this step.** You may only read specs and design docs.
 
 Extract the following from the user's prompt:
 
@@ -35,21 +35,21 @@ Extract the following from the user's prompt:
 - **Actual**: the observed behavior
 
 If any of the three cannot be determined from the prompt, use `AskUserQuestion` to ask
-the user before proceeding. All three must be known before moving to Phase 2.
+the user before proceeding. All three must be known before moving to Step 2.
 
 Also determine the **report type**:
 
-- **Existing test failure** — the user reports that an existing test is failing. The specific failing test method need not be known at this stage; note the scope (class name, scene name, or test assembly) from the prompt. **Phase 2 is skipped** — proceed directly to Phase 3.
-- **Behavioral bug** — the user describes unexpected runtime behavior with no mention of a failing test. Proceed normally through Phase 2.
+- **Existing test failure** — the user reports that an existing test is failing. The specific failing test method need not be known at this stage; note the scope (class name, scene name, or test assembly) from the prompt. **Step 2 is skipped** — proceed directly to Step 3.
+- **Behavioral bug** — the user describes unexpected runtime behavior with no mention of a failing test. Proceed normally through Step 2.
 
 Also check the relevant documentation (specs, design docs) for consistency with the
 user's bug report. If the documentation and the report conflict, use `AskUserQuestion`
 to clarify with the user which is correct. If the docs contain errors or are missing
 relevant information, add them to the list of files to be modified in this bug fix.
 
-### Phase 2: Write the Reproduction Test
+### Step 2: Write the Reproduction Test
 
-> **Skip this phase** if Phase 1 identified this as an **existing test failure** case. Proceed directly to Phase 3.
+> **Skip this step** if Step 1 identified this as an **existing test failure** case. Proceed directly to Step 3.
 
 Search the project's test code for existing tests closest to the bug scenario. These serve two purposes:
 - Placement anchor — add the reproduction test nearby
@@ -64,34 +64,36 @@ Load the `test-designing-guide` skill to design the reproduction test case, then
 If an existing test is testing the wrong behavior (i.e., the test itself is buggy), rewrite
 that test to correctly reproduce the bug rather than adding a new one.
 
-### Phase 3: Verify the Reproduction Test Fails
+### Step 3: Verify the Reproduction Test Fails
 
 Run tests using the `/run-tests` skill and verify that the reproduction test **fails**:
 
-- **If a test was added in Phase 2**: run that specific test.
-- **If Phase 2 was skipped (existing test failure)**: narrow down the test to run using the scope identified in Phase 1 (e.g., a specific test class or assembly). If narrowing down is not possible, run all tests.
+- **If a test was added in Step 2**: run that specific test.
+- **If Step 2 was skipped (existing test failure)**: narrow down the test to run using the scope identified in Step 1 (e.g., a specific test class or assembly). If narrowing down is not possible, run all tests.
 
 If multiple tests fail and it is unclear which one corresponds to the reported bug, use
 `AskUserQuestion` to ask the user which test to focus on.
 
-#### If the test does not fail (Phase 2 path only)
+#### If the test does not fail (Step 2 path only)
 
 - Delete the reproduction test
-- Return to Phase 2 and search more broadly
+- Return to Step 2 and search more broadly
 
-If reproduction has been attempted **3 times** without success, return to **Phase 1** and
+If reproduction has been attempted **3 times** without success, return to **Step 1** and
 use `AskUserQuestion` to re-clarify the bug report with the user.
 
-### Phase 4: Confirm Reproduction with User
+### Step 4: Confirm Reproduction with User
 
 **Present the reproduction evidence to the user** via `AskUserQuestion` before proceeding.
 Include:
 - Reproduction test: file path and method name
 - Test failure message (actual output from the test run)
 
-Proceed to Phase 5 only after the user confirms the reproduction is as expected.
+Once the user confirms the reproduction is as expected:
+1. Commit the reproduction test — if test code is modified in a later step, the integrity of Test First is compromised; commit here without fail so the diff remains verifiable
+2. Proceed to Step 5
 
-### Phase 5: Diagnose & Formulate Fix
+### Step 5: Diagnose & Formulate Fix
 
 With the reproduction confirmed, investigate the root cause:
 
@@ -99,7 +101,7 @@ With the reproduction confirmed, investigate the root cause:
 2. Identify the specific line(s) or logic responsible for the bug
 3. Formulate a fix
 
-### Phase 6: Regression Test Coverage
+### Step 6: Regression Test Coverage
 
 Before applying the fix, check whether the affected area has adequate coverage for adjacent behavior:
 
@@ -108,36 +110,23 @@ Before applying the fix, check whether the affected area has adequate coverage f
 3. If gaps exist, add regression tests and run them — they must **pass**
    (they test existing correct behavior, not the bug itself)
 
-### Phase 7: Apply Fix & Verify
+### Step 7: Apply Fix & Verify
 
-1. Apply the fix formulated in Phase 5 to the production code
+1. Apply the fix formulated in Step 5 to the production code
 2. Run all affected tests using `/run-tests`
 3. Confirm:
    - The reproduction test now **passes** (bug is fixed)
    - All regression tests still **pass**
-4. Commit to git
+4. Commit production code fix to git (includes regression tests from Step 6 and any unavoidable changes to the reproduction test)
 
-### Phase 8: Refactoring
+### Step 8: Refactoring
 
-1. Launch a `general-purpose` subagent to check for duplicate test cases in the test files
-   added or modified in this iteration (plus any existing files in the same test class).
-   Subagent instructions:
-   - Read all relevant test files
-   - Identify tests with the same condition (setup/input) **and** the same assertion
-     (observation/expected value) — these are true duplicates
-   - Do **not** flag tests that share only one of the two (different condition → not a
-     duplicate; same condition but different assertion → not a duplicate)
-   - Do **not** merge same-condition tests into a single multi-assert test
-   - Do **not** parameterize expected values
-   - Even if conditions differ, if tests differ only in arguments passed to the SUT and represent the same equivalence partition, rewrite them as parameterized tests and merge. Never use `if` or `switch` statements inside parameterized tests.
-   - If duplicates are found: delete the redundant one (keep the more accurately named
-     test), then commit the removal
-   - Return a summary: duplicates found and removed, or "no duplicates found"
+1. Launch `test-deduplicator` agent with: list of test files added or modified in this iteration
 2. Resolve diagnostics at the `warning` or higher severity level: for each modified file,
    run `mcp__jetbrains__open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file
    at a time (opening all files at once exceeds the editor tab limit).
    Use `mcp__ide__getDiagnostics` rather than the Unity compiler output because the Unity editor compiler does not reflect `.editorconfig` severity settings.
-3. Re-run tests using `/run-tests` command to confirm they still pass.
-4. Run the `/simplify` skill to apply quality improvements to the modified code.
-5. Re-run tests using `/run-tests` command to confirm they still pass.
-6. Commit to git.
+3. Re-run tests using `/run-tests` command to confirm they still pass
+4. Run the `/simplify` skill to apply quality improvements to the modified code
+5. Re-run tests using `/run-tests` command to confirm they still pass
+6. Commit all remaining changes to git

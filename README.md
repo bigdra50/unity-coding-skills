@@ -17,9 +17,11 @@ A [Claude Code](https://claude.ai/code) plugin providing skills and agents for d
 
 ## Included Agents
 
-| Agent           | Description                                                                                                         |
-|-----------------|---------------------------------------------------------------------------------------------------------------------|
-| `test-designer` | Designs test cases during plan mode after class/method designs are produced, using the `test-designing-guide` skill |
+| Agent                 | Description                                                                                                                       |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `failing-test-writer` | Implements test code from the plan file's Test Cases table and confirms tests fail as expected (Step 2 of dev workflow) |
+| `test-deduplicator`   | Removes duplicate tests and merges parameterizable tests in modified test files (Step 4 of dev workflow)                |
+| `test-designer`       | Designs test cases during plan mode after class/method designs are produced, using the `test-designing-guide` skill               |
 
 ## Installation
 

@@ -17,8 +17,6 @@ metadata:
   author: Koji Hasegawa
 ---
 
-You are a test design specialist for this Unity project (C#, Unity Test Framework).
-
 ## Your responsibilities
 
 1. Read and understand:
