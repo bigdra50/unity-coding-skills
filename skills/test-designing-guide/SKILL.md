@@ -127,7 +127,7 @@ For each technique, derive coverage-aware test cases:
 - Describe the verification clearly
   - Verify one condition per test. **Exception**: when multiple properties of the state resulting from a transition must all be correct simultaneously, a single test may assert all of them together. In that case, list each property being verified in the Verification column.
   - Test concerns separately
-- In the **Verification** column, state exactly **which observable property** is checked and **what its expected value or state** is — this corresponds to the `Expected` segment of the test method name. Describe observable behavior only; do NOT include any of the following **anywhere in the test case output** — this prohibition applies to the Verification column, Test perspectives descriptions, class header descriptions (text after `#### ClassName`), and any other field:
+- In the **Verification** column, state exactly **which observable property** is checked and **what its expected value or state** is — this corresponds to the `Expected` segment of the test method name. Describe observable behavior only; do NOT include any of the following **anywhere in the test case output** — this prohibition applies to the Verification column, class header descriptions (text after `#### ClassName`), and any other field:
   - Test framework attributes (`[Test]`, `[UnityTest]`, `[LoadScene]`, `[Category(...)]`, `[TakeScreenshot]`, etc.)
   - Sync vs async / coroutine choice
   - Construction details of test inputs (e.g., how to build `PointerEventData`, how to instantiate fixtures)
@@ -197,11 +197,10 @@ Output must contain the following blocks **in this order**:
 > Do NOT write "Edit Mode" or "Play Mode" in test case output — that is a test-writing concern, not a design concern.
 
 Structure by layer:
-- **Editor tests / Unit tests**: `#### <ClassName>` → `##### <MethodName>` → Test perspectives → table
-- **Integration tests / Visual verification tests**: `#### <ClassName>` → Test perspectives → table
+- **Editor tests / Unit tests**: `#### <ClassName>` → `##### <MethodName>` → table
+- **Integration tests / Visual verification tests**: `#### <ClassName>` → table
 - **Manual tests**: no class/method section; uses a table of test cases with "Test perspectives / Verification method" column instead of "Verification"
-
-**Test perspectives** — bullet points stating *what* behavioral aspects, conditions, or interactions are verified for this target. Do NOT list technique names; describe what is being tested.
+  - Test perspectives — *what* behavioral aspects, conditions, or interactions are verified for this target. NOT a test technique name
 
 **Output markers** — annotations that flag test case categories; append to the specified field only, not the Verification column:
 
@@ -216,11 +215,7 @@ Structure by layer:
 
 ##### <MethodName>
 
-Test perspectives:
-- <what condition or behavioral aspect is verified, e.g., "returns correct result for valid inputs">
-- <another aspect, e.g., "throws when argument is out of valid range">
-
-| Test Method                                      | Verification                       |
+| Test Method                                      | Verification                               |
 |--------------------------------------------------|--------------------------------------------|
 | `Method_Condition_Expected`                      | What is verified by this test              |
 | `Method_Condition_Expected` (reproduction test)  | What is verified by this reproduction test |
@@ -232,36 +227,24 @@ Test perspectives:
 
 ##### <MethodName>
 
-Test perspectives:
-- <what condition or behavioral aspect is verified, e.g., "returns correct result for valid inputs">
-- <another aspect, e.g., "throws when argument is out of valid range">
-
-| Test Method                                      | Verification                       |
-|--------------------------------------------------|--------------------------------------------|
-| `Method_Condition_Expected`                      | What is verified by this test              |
-| `Method_Condition_Expected`                      | What is verified (uses spy: IDependency)   |
+| Test Method                                      | Verification                             |
+|--------------------------------------------------|------------------------------------------|
+| `Method_Condition_Expected`                      | What is verified by this test            |
+| `Method_Condition_Expected`                      | What is verified (uses spy: IDependency) |
 
 ### Integration tests
 
 #### <ClassName>
 
-Test perspectives:
-- <what UI operation sequence or multi-frame behavior is verified, e.g., "drag-and-drop places card in target slot after release">
-- <another aspect drawn from integration test perspectives, e.g., "buttons behind modal dialog are unreachable while dialog is open">
-
-| Test Method                                      | Verification                       |
-|--------------------------------------------------|--------------------------------------------|
-| `Condition_Expected`                             | What is verified by this test              |
+| Test Method          | Verification                        |
+|----------------------|-------------------------------------|
+| `Condition_Expected` | What is verified by this test       |
 
 ### Visual verification tests
 
 #### <ClassName>
 
-Test perspectives:
-- <what visual aspect is verified, e.g., "all elements within screen bounds with no overlap">
-- <another aspect, e.g., "text has sufficient contrast against its background">
-
-| Test Method          | Verification                                                                                            |
+| Test Method          | Verification                                                                                                    |
 |----------------------|-----------------------------------------------------------------------------------------------------------------|
 | `Condition_Expected` | What is verified (saves screenshot for image analysis: element positions, no overlap, text/background contrast) |
 
