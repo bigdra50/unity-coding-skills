@@ -190,5 +190,6 @@ Launch a `general-purpose` subagent to check for duplicate test cases in the tes
 - Do **not** flag tests that share only one of the two (different condition → not a duplicate; same condition but different assertion → not a duplicate)
 - Do **not** merge same-condition tests into a single multi-assert test
 - Do **not** parameterize expected values
+- Even if conditions differ, if tests differ only in arguments passed to the SUT and represent the same equivalence partition, rewrite them as parameterized tests and merge. Never use `if` or `switch` statements inside parameterized tests.
 - If duplicates are found: delete the redundant one (keep the more accurately named test), then commit the removal
 - Return a summary: duplicates found and removed, or "no duplicates found"

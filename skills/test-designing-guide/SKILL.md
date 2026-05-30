@@ -60,6 +60,18 @@ For each test target, select appropriate techniques:
 - **Decision table testing** — if multiple conditions combine to produce different outcomes
 - **Error guessing** — experience-based; derive cases from failure patterns common in game development. Examples to consider: rapid button mashing, simultaneous button press, input during scene transition / loading, collision tunneling, random distribution bias or PRNG sequence looping, numeric overflow, network failure. Use this to surface implementation concerns that spec-based techniques don't reach.
 
+### Parameterized tests
+
+When an equivalence partition includes multiple test cases — such as argument variations within the same partition or boundary values at the partition's edges — consolidate them into a single parameterized test. All cases must belong to the **same equivalence partition** and share the same expected outcome.
+
+**Specifying parameter name and values in the Test Method column** — write values after the method name:
+
+- **Bool or enum, all values used**: `(direction: all values of Direction)`, `(flag: all bool values)`
+- **Subset or specific combinations**: list concrete values — `(a: 0, 1, -1; b: 0, 1)`
+- **Three or more parameters each with many values**: write `(use pairwise)` — the test-writing phase applies the pairwise (all-pairs) method to select a covering combination set
+
+Do NOT over-consolidate: keep separate rows for tests that belong to **different** equivalence partitions or produce **different** expected outcomes.
+
 ### Invalid partition
 
 - **UI input validation** — test invalid inputs that a user can enter through the UI (e.g., out-of-range values in a numeric text field). These represent real failure paths at the system boundary and must be tested.
@@ -107,6 +119,7 @@ For each technique, derive coverage-aware test cases:
 - Use the naming convention based on the layer:
   - **Editor tests / Unit tests**: `MethodName_Condition_ExpectedResult` — the test target is a method, so include the method name.
   - **Integration tests / Visual verification tests**: `Condition_ExpectedResult` — the test target is NOT a single method (it is a multi-component interaction or an on-screen rendering), so do NOT include a method name.
+  - For **parameterized tests**, the `<Condition>` segment is the **equivalence partition name**, not an enumeration of individual argument values.
 - Do NOT create sequential IDs in test case names
 - Describe the verification clearly
   - Verify one condition per test. **Exception**: when multiple properties of the state resulting from a transition must all be correct simultaneously, a single test may assert all of them together. In that case, list each property being verified in the Verification column.
@@ -118,10 +131,8 @@ For each technique, derive coverage-aware test cases:
   - Assertion helper class names (e.g., `LayoutAssert`, `GameObjectFinder`)
   - Rationale or intent text — why the test exists, what it proves about the design, or what the current (buggy) behavior is. Observable behavior only.
   - Any other implementation/mechanism detail — those decisions belong to the test-writing phase
-- **Parameterized tests** — when multiple test cases share the same expected outcome but differ only in their input arguments (e.g., boundary values within the same equivalence partition), consolidate them into a single test case row.
-  - Do NOT over-consolidate: keep separate rows for cases that belong to different equivalence partitions or produce different outcomes.
-  - In the **Test Method column**, list the parameter values being tested after the method name. Do NOT specify the framework mechanism (`TestCase`, `Values`, etc.) — that's a test-writing decision.
-  - Example: `Add_TwoIntegers_ReturnsSum` (a: 0, 1, -1. b: 0, 1, 1) | `加算結果が引数の和になる`
+- **Parameterized tests** — consolidate same-partition test cases into a single table row per [Parameterized tests](#parameterized-tests) in Section 3. Do NOT specify the framework mechanism (`TestCase`, `Values`, etc.) in the Test Method column — that's a test-writing decision.
+  - Example: `Add_TwoIntegers_ReturnsSum` (a: 0, 1, -1; b: 0, 1, 1) | `加算結果が引数の和になる`
 - If a test case uses a **spy** to verify interactions, note it in the Verification column: e.g., `(uses spy: <TargetDependency>)`. Do NOT note stubs or fakes — those are arrange/action concerns. xUTP definitions for reference:
   - **Stub** — returns canned responses to isolate the SUT from a dependency. Arrange/action concern; do NOT mention in Verification.
   - **Spy** — records interactions (calls, arguments) for later verification. Note it in Verification.

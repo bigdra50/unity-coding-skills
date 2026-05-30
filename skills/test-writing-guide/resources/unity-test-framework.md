@@ -267,8 +267,8 @@ public void Damage_WeaknessAttribute_Returns2x(Element defence, Element attack) 
 - `[Values] Element param` — all enum values (argument omitted)
 - `[Values] bool param` — `true` and `false`
 - Multiple `[Values]` parameters produce the **full Cartesian product** by default
-- `[Pairwise]` on the method → pairwise coverage instead of full Cartesian
-- `[Sequential]` on the method → match parameters by index (not combinatorial)
+- `[Pairwise]` on the method → pairwise coverage instead of full Cartesian; use when the test cases specify `(use pairwise)`
+- `[Sequential]` on the method → match parameters by index (not combinatorial); do NOT use in principle — use `[TestCase]` / `[TestCaseSource]` instead to make each combination explicit
 
 ### Restrictions
 
