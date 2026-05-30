@@ -1,19 +1,19 @@
 # unity-coding-skills
 
-A [Claude Code](https://claude.ai/code) plugin providing skills and an agent for developing Unity projects — maintainable test design, test-first workflow, coding guidelines, scene editing, and more.
+A [Claude Code](https://claude.ai/code) plugin providing skills and agents for developing Unity projects — maintainable test design and implementation, test-first workflow, coding guidelines, scene editing, and more.
 
 ## Included Skills
 
-| Skill                      | Description                                                                           | Required                                                                                                                                                                                                     |
-|----------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `code-writing-guide`       | Coding conventions and guidelines for Unity C# projects                               |                                                                                                                                                                                                              |
-| `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                     | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
-| `fix-bug`                  | Diagnoses and fixes bugs using a test-first workflow (reproduce, diagnose, fix)       |                                                                                                                                                                                                              |
-| `plan-feature`             | Orchestrates the test-first planning workflow for feature implementation in plan mode |                                                                                                                                                                                                              |
-| `run-tests`                | Running Unity tests via the `run_unity_tests` tool                                    | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
-| `test-designing-guide`     | Design maintainable test cases; reduce redundant tests, tests without assertions, and unnecessary test doubles |                                                                                                                                                                                                              |
-| `test-writing-guide`       | Conventions for writing Unity Test Framework test code                                | [Test Helper](https://github.com/nowsprinting/test-helper) and [UI Test Helper](https://github.com/nowsprinting/test-helper.ui) package                                                                      |
-| `unity-yaml-editing-guide` | Guidelines for directly hand-editing Unity YAML asset files                           |                                                                                                                                                                                                              |
+| Skill                      | Description                                                                                                    | Required                                                                                                                                                                                            |
+|----------------------------|----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `code-writing-guide`       | Coding conventions and guidelines for Unity C# projects                                                        |                                                                                                                                                                                                     |
+| `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                                              | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
+| `fix-bug`                  | Diagnoses and fixes bugs using a test-first workflow (reproduce, diagnose, fix)                                |                                                                                                                                                                                                     |
+| `plan-feature`             | Orchestrates the test-first planning workflow for feature implementation in plan mode                          |                                                                                                                                                                                                     |
+| `run-tests`                | Running Unity tests via the `run_unity_tests` tool                                                             | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
+| `test-designing-guide`     | Design maintainable test cases; reduce redundant tests, tests without assertions, and unnecessary test doubles |                                                                                                                                                                                                     |
+| `test-writing-guide`       | Conventions for writing Unity Test Framework test code                                                         | [Test Helper](https://github.com/nowsprinting/test-helper) and [UI Test Helper](https://github.com/nowsprinting/test-helper.ui) package                                                             |
+| `unity-yaml-editing-guide` | Guidelines for directly hand-editing Unity YAML asset files                                                    |                                                                                                                                                                                                     |
 
 ## Included Agents
 
@@ -34,26 +34,14 @@ Add the marketplace and install the plugin:
 
 ### Project-scope installation (team sharing)
 
-Add the following to your project's `.claude/settings.json` and commit it to your repository:
+Add the marketplace and install the plugin with `--scope project`:
 
-```json
-{
-  "extraKnownMarketplaces": {
-    "nowsprinting-unity-coding-skills": {
-      "source": {
-        "source": "github",
-        "repo": "nowsprinting/unity-coding-skills"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "unity-coding-skills@nowsprinting-unity-coding-skills": true
-  }
-}
+```shell
+/plugin marketplace add nowsprinting/unity-coding-skills
+/plugin install unity-coding-skills@nowsprinting-unity-coding-skills --scope project
 ```
 
-> [!TIP]  
-> Recommend forking this repository and customizing it to suit your environment and project.
+Commit the resulting `.claude/settings.json` to your repository.
 
 > [!NOTE]  
 > When team members trust the project folder, Claude Code prompts them to install the marketplace and plugin automatically.
@@ -62,7 +50,7 @@ Add the following to your project's `.claude/settings.json` and commit it to you
 
 ### 1. MCP Server Configuration
 
-The `run-tests` and `edit-scene` skills require JetBrains MCP servers.
+The `run-tests` and `edit-scene` skills require JetBrains built-in MCP server and extension.
 
 1. Enable JetBrains built-in [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html)
 2. Install [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity)
