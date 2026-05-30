@@ -151,7 +151,7 @@ Paste the **Template** below verbatim as the body of the `## Development Workflo
 - [ ] Detect and remove duplicate tests in added/modified test files
 - [ ] Resolve diagnostics at warning or higher for each modified file (`open_file_in_editor` → `getDiagnostics` → fix, one file at a time)
 - [ ] Run tests with `/run-tests` and confirm **all pass**
-- [ ] Run `/code-review ${CLAUDE_EFFORT}` and apply findings (for bug findings: write a reproduction test, confirm it **fails**, then fix)
+- [ ] Run `/simplify` to apply quality improvements to the modified code
 - [ ] Run tests with `/run-tests` and confirm **all pass**
 - [ ] Commit to git
 ```

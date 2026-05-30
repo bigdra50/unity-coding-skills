@@ -136,9 +136,6 @@ Before applying the fix, check whether the affected area has adequate coverage f
    run `open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file
    at a time (opening all files at once exceeds the editor tab limit).
 3. Re-run tests using `/run-tests` command to confirm they still pass.
-4. Run the `/code-review ${CLAUDE_EFFORT}` skill, then apply the returned findings to fix
-   the code. For each finding: read the flagged code, understand the issue, and make the
-   correction. If the finding is a **bug**, write a reproduction test first, run it with
-   `/run-tests` to confirm it **fails**, then fix the bug.
+4. Run the `/simplify` skill to apply quality improvements to the modified code.
 5. Re-run tests using `/run-tests` command to confirm they still pass.
 6. Commit to git.
