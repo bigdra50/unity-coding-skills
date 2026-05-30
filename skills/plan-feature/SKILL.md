@@ -149,7 +149,7 @@ Paste the **Template** below verbatim as the body of the `## Development Workflo
 ### Step 4: Refactoring
 
 - [ ] Detect and remove duplicate tests in added/modified test files
-- [ ] Resolve diagnostics at warning or higher for each modified file (`open_file_in_editor` → `getDiagnostics` → fix, one file at a time)
+- [ ] Resolve diagnostics at warning or higher for each modified file (`mcp__jetbrains__open_file_in_editor` → `mcp__ide__getDiagnostics` → fix, one file at a time; use `mcp__ide__getDiagnostics` because the Unity editor compiler does not reflect `.editorconfig` severity settings)
 - [ ] Run tests with `/run-tests` and confirm **all pass**
 - [ ] Run `/simplify` to apply quality improvements to the modified code
 - [ ] Run tests with `/run-tests` and confirm **all pass**
