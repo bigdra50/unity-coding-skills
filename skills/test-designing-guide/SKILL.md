@@ -140,7 +140,6 @@ For each technique, derive coverage-aware test cases:
   - **Stub** — returns canned responses to isolate the SUT from a dependency. Arrange/action concern; do NOT mention in Verification.
   - **Spy** — records interactions (calls, arguments) for later verification. Note it in Verification.
   - **Fake** — a simplified but working implementation of a dependency. Arrange/action concern; do NOT mention in Verification.
-- **Reproduction test marker** — when a test case is designed to reproduce a reported bug (see Section 3, Reproduction and regression tests), append `(reproduction test)` to the **Test Method column** (after the method name), not the Verification column.
 - For visual verifications (e.g., on-screen rendering, UI layout), save a screenshot during test execution and verify it via image analysis. Note this in the Verification column along with the specific visual aspects to verify — e.g., `(saves screenshot for image analysis: element positions within screen, no overlap between elements, correct visibility state, text/background contrast)`.
   - **NEVER create a dedicated visual verification test class** — add visual verification test methods to the *same test class* as the functional tests.
   - **Screenshot resolution**: By default, do not fix a specific resolution for screenshot tests — let them run at whatever resolution the test environment provides. Only fix a resolution when the test condition explicitly depends on it (e.g., verifying element positions at a stated viewport size).
@@ -203,6 +202,12 @@ Structure by layer:
 - **Manual tests**: no class/method section; uses a table of test cases with "Test perspectives / Verification method" column instead of "Verification"
 
 **Test perspectives** — bullet points stating *what* behavioral aspects, conditions, or interactions are verified for this target. Do NOT list technique names; describe what is being tested.
+
+**Output markers** — annotations that flag test case categories; append to the specified field only, not the Verification column:
+
+- `(reproduction test)` — append to the **Test Method column** when the test reproduces a reported bug (see Section 3, Reproduction tests)
+- `(acceptance test)` — append to the **Test Method column** when the test covers a UI-layer requirement (see Section 5)
+- `(internal)` — append to the **`##### <MethodName>` section heading** when the test target is an `internal` method
 
 ```markdown
 ### Editor tests
@@ -275,7 +280,7 @@ Use one of the following labels:
 
 | Label               | Meaning                                                                                                |
 |---------------------|--------------------------------------------------------------------------------------------------------|
-| `TESTABILITY: PASS` | All public methods are independently testable; test case count is realistic                            |
+| `TESTABILITY: PASS` | All public and internal methods are independently testable; test case count is realistic               |
 | `TESTABILITY: WARN` | Localized concerns (e.g., too many test doubles, large integration tests, high FSM state combinations) |
 | `TESTABILITY: FAIL` | Fundamental testability issues that require design revision                                            |
 

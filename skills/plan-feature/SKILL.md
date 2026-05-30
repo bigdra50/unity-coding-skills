@@ -40,6 +40,7 @@ Launch a Plan agent to design the class/method structure. Include the following 
 
 > Design the class/method seams with **testability** in mind:
 > - Prefer small, focused public interfaces
+> - For methods that require testing but do not need to be accessible outside the assembly, use `internal` visibility instead of `public`
 > - Inject dependencies via interfaces so they can be replaced with test doubles
 > - Avoid hidden static/global state and `new` calls inside constructors for external dependencies
 >
@@ -49,7 +50,7 @@ Launch a Plan agent to design the class/method structure. Include the following 
 
 The Plan agent output should include **only**:
 - Class names and responsibilities
-- Public method signatures
+- Public and internal method signatures
 - Dependency interfaces (if any)
 - Brief rationale for design decisions
 
@@ -64,7 +65,7 @@ After Phase 2, launch the `test-designer` agent using the following prompt struc
 [feature requirements]
 
 ## Implementation Design
-[class names, public method signatures, dependency interfaces, and design rationale from the Phase 2 Plan agent]
+[class names, public and internal method signatures, dependency interfaces, and design rationale from the Phase 2 Plan agent]
 
 ## Existing Code Context
 [relevant existing code structure from Phase 1 Explore]

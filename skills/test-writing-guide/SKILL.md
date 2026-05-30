@@ -17,10 +17,9 @@ Guide for writing test code for Unity projects.
 
 - Before modifying any test file, check if the editor is in Play Mode. If it is, stop it using the `unity_play_control` tool first.
 - Never create `.meta` files. Unity editor creates them automatically.
-
-### Integration Tests
-
-When implementing a test classified as an integration test, add `[Category("Integration")]` to the test method.
+- When implementing a test for an `internal` visibility method, add `[Category("Internal")]` to the test method.
+- When implementing tests designed as integration tests, add `[Category("Integration")]` to the test method.
+- When implementing tests designed as acceptance tests (marked `(acceptance test)` in the test case design), add `[Category("Acceptance")]` to the test method.
 
 ### UI Tests
 
