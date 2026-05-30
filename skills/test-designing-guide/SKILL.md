@@ -99,7 +99,10 @@ When the test target is a prefab, scene, or a GameObject composed of multiple co
 - **Multi-frame event system interactions** — behaviors triggered by Unity's event system that unfold across multiple frames
 - **Scene transitions** — behaviors that span or depend on scene loading and unloading
 - **UI blocking** — verify that UI elements behind a modal dialog or overlay are unreachable (blocked from interaction); conversely, verify those elements are reachable when no overlay is present
-- **UI layout** — verify element bounds, overlap, and text overflow using rect-comparison assertions. Any layout bug expressible as a geometric predicate (is element within bounds? do two elements overlap? does text overflow its container?) warrants a deterministic integration test assertion. Visual verification tests are still valuable for initial implementation review, but do not rely on them **alone** for regression — image analysis is not run on every CI pass, so regression coverage requires explicit assertions
+- **UI layout** — verify element bounds, overlap, and text overflow using rect-comparison assertions:
+  - Any layout bug expressible as a geometric predicate warrants a deterministic integration test assertion — e.g., "is element within screen bounds?", "do two elements overlap?", "does text overflow its container?"
+  - Do NOT verify positional relationships between elements or on-screen positions (e.g., "A is displayed to the right of B") — approximate positions have no meaningful pass/fail criterion, and precise coordinate checks are brittle. Use visual verification tests for these instead.
+  - Visual verification tests are still valuable for initial implementation review, but do not rely on them **alone** for regression — image analysis is not run on every CI pass, so regression coverage requires explicit assertions.
 
 ### Reproduction tests (bug-fix tasks only)
 
@@ -199,6 +202,8 @@ Structure by layer:
 - **Integration tests / Visual verification tests**: `#### <ClassName>` → Test perspectives → table
 - **Manual tests**: no class/method section; uses a table of test cases with "Test perspectives / Verification method" column instead of "Verification"
 
+**Test perspectives** — bullet points stating *what* behavioral aspects, conditions, or interactions are verified for this target. Do NOT list technique names; describe what is being tested.
+
 ```markdown
 ### Editor tests
 
@@ -206,7 +211,9 @@ Structure by layer:
 
 ##### <MethodName>
 
-Test perspectives: <techniques selected from Section 3, e.g., equivalence partitioning, boundary value analysis>
+Test perspectives:
+- <what condition or behavioral aspect is verified, e.g., "returns correct result for valid inputs">
+- <another aspect, e.g., "throws when argument is out of valid range">
 
 | Test Method                                      | Verification                       |
 |--------------------------------------------------|--------------------------------------------|
@@ -220,7 +227,9 @@ Test perspectives: <techniques selected from Section 3, e.g., equivalence partit
 
 ##### <MethodName>
 
-Test perspectives: <techniques selected from Section 3>
+Test perspectives:
+- <what condition or behavioral aspect is verified, e.g., "returns correct result for valid inputs">
+- <another aspect, e.g., "throws when argument is out of valid range">
 
 | Test Method                                      | Verification                       |
 |--------------------------------------------------|--------------------------------------------|
@@ -231,7 +240,9 @@ Test perspectives: <techniques selected from Section 3>
 
 #### <ClassName>
 
-Test perspectives: <class-level testing angles, e.g., multi-frame interaction, scene transition>
+Test perspectives:
+- <what UI operation sequence or multi-frame behavior is verified, e.g., "drag-and-drop places card in target slot after release">
+- <another aspect drawn from integration test perspectives, e.g., "buttons behind modal dialog are unreachable while dialog is open">
 
 | Test Method                                      | Verification                       |
 |--------------------------------------------------|--------------------------------------------|
@@ -241,7 +252,9 @@ Test perspectives: <class-level testing angles, e.g., multi-frame interaction, s
 
 #### <ClassName>
 
-Test perspectives: <class-level visual aspects to verify, e.g., layout, contrast>
+Test perspectives:
+- <what visual aspect is verified, e.g., "all elements within screen bounds with no overlap">
+- <another aspect, e.g., "text has sufficient contrast against its background">
 
 | Test Method          | Verification                                                                                            |
 |----------------------|-----------------------------------------------------------------------------------------------------------------|
