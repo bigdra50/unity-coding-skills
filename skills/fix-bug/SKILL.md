@@ -127,6 +127,6 @@ Before applying the fix, check whether the affected area has adequate coverage f
    at a time (opening all files at once exceeds the editor tab limit).
    Use `mcp__ide__getDiagnostics` rather than the Unity compiler output because the Unity editor compiler does not reflect `.editorconfig` severity settings.
 3. Re-run tests using `/run-tests` command to confirm they still pass
-4. Run the `/simplify` skill to apply quality improvements to the modified code
+4. Run the Claude Code built-in `/simplify` skill (`Skill({skill: "simplify"})` — not a plugin skill) to apply quality improvements to the modified code
 5. Re-run tests using `/run-tests` command to confirm they still pass
 6. Commit all remaining changes to git

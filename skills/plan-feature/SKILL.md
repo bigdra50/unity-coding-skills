@@ -150,7 +150,7 @@ Paste the **Template** below verbatim as the body of the `## Development Workflo
 - [ ] Launch `test-deduplicator` agent with: list of test files added or modified in Step 2
 - [ ] Resolve diagnostics at warning or higher for each modified file (`mcp__jetbrains__open_file_in_editor` → `mcp__ide__getDiagnostics` → fix, one file at a time; use `mcp__ide__getDiagnostics` because the Unity editor compiler does not reflect `.editorconfig` severity settings)
 - [ ] Run tests with `/run-tests` and confirm **all pass**
-- [ ] Run `/simplify` to apply quality improvements to the modified code
+- [ ] Run the Claude Code built-in `/simplify` skill (`Skill({skill: "simplify"})` — not a plugin skill) to apply quality improvements to the modified code
 - [ ] Run tests with `/run-tests` and confirm **all pass**
 - [ ] Commit all remaining changes to git
 ```
