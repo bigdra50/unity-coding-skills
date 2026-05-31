@@ -10,6 +10,7 @@ A [Claude Code](https://claude.ai/code) plugin providing skills and agents for d
 | `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                                              | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
 | `fix-bug`                  | Diagnoses and fixes bugs using a test-first workflow (reproduce, diagnose, fix)                                |                                                                                                                                                                                                     |
 | `plan-feature`             | Orchestrates the test-first planning workflow for feature implementation in plan mode                          |                                                                                                                                                                                                     |
+| `refine-tests`             | Reviews existing test code for conformance to the test design and writing guides, then plans the refinement    | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
 | `run-tests`                | Running Unity tests via the `run_unity_tests` tool                                                             | JetBrains [MCP server](https://www.jetbrains.com/help/rider/mcp-server.html) and [MCP Server Extension for Unity](https://plugins.jetbrains.com/plugin/30357-mcp-server-extension-for-unity) plugin |
 | `test-designing-guide`     | Design maintainable test cases; reduce redundant tests, tests without assertions, and unnecessary test doubles |                                                                                                                                                                                                     |
 | `test-writing-guide`       | Conventions for writing Unity Test Framework test code                                                         | [Test Helper](https://github.com/nowsprinting/test-helper) and [UI Test Helper](https://github.com/nowsprinting/test-helper.ui) package                                                             |
@@ -104,6 +105,14 @@ Type out of plan mode:
 
 ```bash
 /fix-bug <INCIDENT>
+```
+
+### Refine existing test code for conformance to the test design and writing guides
+
+Type in plan mode:
+
+```bash
+/refine-tests <PATH>
 ```
 
 ## Contributing
