@@ -18,11 +18,11 @@ A [Claude Code](https://claude.ai/code) plugin providing skills and agents for d
 
 ## Included Agents
 
-| Agent                 | Description                                                                                                                       |
-|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| Agent                 | Description                                                                                                             |
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------|
 | `failing-test-writer` | Implements test code from the plan file's Test Cases table and confirms tests fail as expected (Step 2 of dev workflow) |
 | `test-deduplicator`   | Removes duplicate tests and merges parameterizable tests in modified test files (Step 4 of dev workflow)                |
-| `test-designer`       | Designs test cases during plan mode after class/method designs are produced, using the `test-designing-guide` skill               |
+| `test-designer`       | Designs test cases during plan mode after class/method designs are produced, using the `test-designing-guide` skill     |
 
 ## Installation
 
@@ -89,9 +89,12 @@ resharper_unused_member_global_highlighting = warning
 resharper_unused_member_local_highlighting = warning
 ```
 
+The Rider plugin for measuring complexity is also useful.
+e.g., [CognitiveComplexity](https://plugins.jetbrains.com/plugin/12024-cognitivecomplexity), [CyclomaticComplexity](https://plugins.jetbrains.com/plugin/10395-cyclomaticcomplexity)
+
 ## Usage
 
-### Feature Implementation
+### Test-first feature implementation planning
 
 Type in plan mode:
 
@@ -99,13 +102,27 @@ Type in plan mode:
 /plan-feature <SPEC>
 ```
 
-### Fix bug
+The created plan file includes the following:
+
+- Layered-designed test cases
+  - Reduce redundant tests, tests without assertions, and unnecessary test doubles
+  - Editor tests
+  - Unit tests (Play Mode tests)
+  - Integrated tests including UI operation
+  - Visual verification tests using image analysis
+- Test-first development workflow
+  - Effective (failable) test code
+  - Definition of Done
+
+### Bug fixes through reproduction testing
 
 Type out of plan mode:
 
 ```bash
 /fix-bug <INCIDENT>
 ```
+
+First, create, run, and verify a test that reproduces the bug, and then fix the bug.
 
 ### Refine existing test code for conformance to the test design and writing guides
 
