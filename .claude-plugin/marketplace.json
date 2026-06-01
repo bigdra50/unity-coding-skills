@@ -1,14 +1,14 @@
 {
-  "name": "nowsprinting-unity-coding-skills",
+  "name": "bigdra50-unity-coding-skills",
   "owner": {
-    "name": "Koji Hasegawa",
-    "email": "hasegawa@hubsys.co.jp"
+    "name": "bigdra50",
+    "url": "https://github.com/bigdra50"
   },
   "plugins": [
     {
       "name": "unity-coding-skills",
       "source": "./",
-      "description": "Skills and agents for developing Unity projects with Claude Code — maintainable test design and implementation, test-first workflow, coding guidelines, scene editing, and more."
+      "description": "Skills and agents for developing Unity projects with Claude Code — maintainable test design and implementation, test-first workflow, coding guidelines, scene editing, and more. Forked from nowsprinting/unity-coding-skills (original author: Koji Hasegawa); this fork uses unity-cli as the Unity Editor backend instead of JetBrains MCP."
     }
   ]
 }

@@ -31,8 +31,8 @@ A [Claude Code](https://claude.ai/code) plugin providing skills and agents for d
 Add the marketplace and install the plugin:
 
 ```shell
-/plugin marketplace add nowsprinting/unity-coding-skills
-/plugin install unity-coding-skills@nowsprinting-unity-coding-skills
+/plugin marketplace add bigdra50/unity-coding-skills
+/plugin install unity-coding-skills@bigdra50-unity-coding-skills
 ```
 
 ### Project-scope installation (team sharing)
@@ -40,8 +40,8 @@ Add the marketplace and install the plugin:
 Add the marketplace and install the plugin with `--scope project`:
 
 ```shell
-/plugin marketplace add nowsprinting/unity-coding-skills
-/plugin install unity-coding-skills@nowsprinting-unity-coding-skills --scope project
+/plugin marketplace add bigdra50/unity-coding-skills
+/plugin install unity-coding-skills@bigdra50-unity-coding-skills --scope project
 ```
 
 Commit the resulting `.claude/settings.json` to your repository.
