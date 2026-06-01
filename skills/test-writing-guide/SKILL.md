@@ -15,7 +15,7 @@ Guide for writing test code for Unity projects.
 
 ## Rules
 
-- Before modifying any test file, check if the editor is in Play Mode. If it is, stop it using the `mcp__jetbrains__unity_play_control` tool first.
+- Before modifying any test file, check whether the editor is in Play Mode (`u -i <instance> state --json` → `isPlaying`); if so, exit it with `u -i <instance> stop` first. (`<instance>` is the target Unity Editor; run `u instances` to list connected editors.)
 - Never create `.meta` files. Unity editor creates them automatically.
 - When implementing a test for an `internal` visibility method, add `[Category("Internal")]` to the test method.
 - When implementing tests designed as integration tests, add `[Category("Integration")]` to the test method.

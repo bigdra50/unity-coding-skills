@@ -122,10 +122,9 @@ Before applying the fix, check whether the affected area has adequate coverage f
 ### Step 8: Refactoring
 
 1. Launch `test-deduplicator` agent with: list of test files added or modified in this iteration
-2. Resolve diagnostics at the `warning` or higher severity level: for each modified file,
-   run `mcp__jetbrains__open_file_in_editor` → `mcp__ide__getDiagnostics` → fix as a single set, one file
-   at a time (opening all files at once exceeds the editor tab limit).
-   Use `mcp__ide__getDiagnostics` rather than the Unity compiler output because the Unity editor compiler does not reflect `.editorconfig` severity settings.
+2. Resolve diagnostics at the `warning` or higher severity level for each modified file, using
+   `jb inspectcode` to honor `.editorconfig` severity (the Unity compiler output does not).
+   See the `code-writing-guide` skill's `diagnostics-review-feedback.md` for the exact command and suppression policy.
 3. Re-run tests using `/run-tests` command to confirm they still pass
 4. Run the Claude Code built-in `/simplify` skill (`Skill({skill: "simplify"})` — not a plugin skill) to apply quality improvements to the modified code
 5. Re-run tests using `/run-tests` command to confirm they still pass

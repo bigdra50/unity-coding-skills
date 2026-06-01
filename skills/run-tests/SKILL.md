@@ -1,9 +1,9 @@
 ---
 name: run-tests
 description: >-
-  Provides guidelines for running Unity tests using the mcp__jetbrains__run_unity_tests tool.
+  Provides guidelines for running Unity tests with the `u tests run` command (unity-cli).
   Make sure to use this skill whenever running, executing, or re-running tests on the Unity editor.
-  This includes verifying implementations, debugging test failures, running specific test assemblies, or any task that involves the mcp__jetbrains__run_unity_tests tool.
+  This includes verifying implementations, debugging test failures, running specific test assemblies, or any task that involves running Unity tests.
   Even if the user just says "run the tests" or "check if it passes", use this skill.
 license: Unlicense
 metadata:
@@ -12,19 +12,27 @@ metadata:
 
 ## Gotchas
 
-- **Never call two Unity Editor tools in parallel.** `mcp__jetbrains__unity_play_control`, `mcp__jetbrains__get_unity_compilation_result`, `mcp__jetbrains__run_unity_tests`, and `mcp__jetbrains__run_method_in_unity` must be called strictly one at a time — always wait for each call to return before making the next one. Calling them concurrently causes domain-reload conflicts that result in "canceled" or "did not connect within 30 seconds" errors.
-- **When a Unity Editor tool returns `error` or `canceled`, wait 10 seconds before retrying.** Domain reload typically takes several seconds; immediate retry hits the same in-flight reload and fails again. Do not switch tools in the meantime (e.g., calling `mcp__jetbrains__unity_play_control` to verify state) — that just compounds the multiplexed calls. If the same tool returns `error` or `canceled` on two consecutive attempts (with the 10-second wait between them), stop and consult the user instead of retrying further.
+- **Serialize editor commands around compilation and domain reloads.** A `refresh`, `tests run`, or Play Mode change can trigger script recompilation / domain reload; issuing the next command mid-reload fails or returns stale state. Wait for `isCompiling` (and `isPlaying` after a Play Mode change) to settle via `u -i <instance> state --json` before issuing the next command — do not fire commands back-to-back.
+- **On a failed or empty-looking result, re-check state before retrying.** If a command errors or output is unexpectedly empty, poll `u -i <instance> state --json` until `isCompiling` is `false`, then retry once. If the same run fails on two consecutive attempts, stop and consult the user instead of looping.
 
 ## Run Tests
 
 Before running tests, complete the following steps in order:
 
-1. If any code was modified, confirm compilation success using the `mcp__jetbrains__get_unity_compilation_result` tool before proceeding.
-2. To determine `assemblyNames` and `testMode` for a specific test class, run `${CLAUDE_SKILL_DIR}/scripts/resolve-test-target.sh <test-class-cs-path>`. The script prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when running an already-known assembly.
+1. If any code was modified, confirm compilation succeeds first with the **Quick Verify** sequence: `u -i <instance> console clear` → `u -i <instance> refresh` → poll `u -i <instance> state --json` until `isCompiling` is `false` (≈2 s interval, up to ~30 s) → `u -i <instance> console get -l E`. Resolve any error before running tests. (`<instance>` is the target Unity Editor; run `u instances` to list connected editors.)
+2. To determine the assembly and test mode for a specific test class, run `${CLAUDE_SKILL_DIR}/scripts/resolve-test-target.sh <test-class-cs-path>`. It prints `<assemblyName>\t<testMode>` (e.g. `MyGame.Tests\tPlayMode`). Skip this step when the assembly is already known.
 
-Then use the `mcp__jetbrains__run_unity_tests` tool to run the tests on the Unity editor.
+Then run the tests with `u` (map `testMode` to the `u` mode argument: `EditMode` → `edit`, `PlayMode` → `play`):
 
-Test execution can take several minutes. Do not re-run while a test is in progress — always wait for it to complete or time out. If a timeout occurs, narrow down the tests using filter settings and re-run.
+```bash
+u -i <instance> tests run edit                                # all EditMode tests
+u -i <instance> tests run play                                # all PlayMode tests
+u -i <instance> tests run edit -a <assemblyName>              # one assembly (from step 2)
+u -i <instance> tests run edit -n <Namespace.Class.Method>    # a single test (full name)
+u -i <instance> tests run edit -g "<regex>"                   # tests whose name matches a regex
+```
+
+`u tests run` waits for completion and prints a pass/fail summary; its exit code is non-zero (5) when any test fails. Filters (`-a`/`-n`/`-c`/`-g`) are ANDed together. Test execution can take several minutes — do not start a second run while one is in progress (check with `u -i <instance> tests status`). If it times out, narrow the run with filters and retry. To start without blocking, add `--no-wait` and poll `u -i <instance> tests status`.
 
 ## Rules for Test Failures
 
@@ -40,6 +48,6 @@ When consulting, clarify:
 
 Read the appropriate resource file based on the situation:
 
-- Any Unity MCP tool (`mcp__jetbrains__run_unity_tests`, `mcp__jetbrains__unity_play_control`, `mcp__jetbrains__get_unity_compilation_result`) is not available or fails with a connection error: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-run-unity-tests.md`
+- `u tests run` fails, hangs, or the editor is not reachable (no connected instance, or the Relay Server is not running): Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-run-unity-tests.md`
 - A test fails due to an assertion, constraint, or comparer in the `TestHelper` namespace (excluding `TestHelper.UI`): Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-test-helper.md`
 - A test fails due to an exception thrown from the `TestHelper.UI` namespace: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-test-helper-ui.md`

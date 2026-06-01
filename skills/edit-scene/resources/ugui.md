@@ -263,7 +263,7 @@ Without this, `DefaultControls.Create*` uses `new GameObject(...)` internally fo
 
 ## Minimal sample
 
-Editor script that creates a Canvas with a Button under `Assets/Editor/`. Call it via `mcp__jetbrains__run_method_in_unity`.
+Editor script that creates a Canvas with a Button under `Assets/Editor/`. Give the entry method a `[MenuItem("Tools/Build Sample Scene")]` and run it with `u -i <instance> menu exec 'Tools/Build Sample Scene'`.
 
 ```csharp
 using UnityEditor;
@@ -275,7 +275,8 @@ using UnityEditor.EventSystems;
 
 public static class SceneBuilder
 {
-    // Invoke this method via mcp__jetbrains__run_method_in_unity: "SceneBuilder.Build"
+    // Invoke via: u -i <instance> menu exec 'Tools/Build Sample Scene'
+    [MenuItem("Tools/Build Sample Scene")]
     public static void Build()
     {
         // 1. New scene (see SKILL.md ## Scene lifecycle)

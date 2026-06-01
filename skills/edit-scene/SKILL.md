@@ -18,21 +18,21 @@ Guide for creating and editing Unity scene files in Unity projects.
 ## Rules
 
 - Do not directly Edit or Write `.unity` or `.prefab` files. Instead, write an editor script under `Assets/Editor/` and execute it in Unity to create or update the scene or prefab — those carry GameObject/Prefab-instance structure that is unsafe to author by hand.
+  - For simple, one-off changes (create a GameObject, add or set a component, save the scene), the `u gameobject` / `u component` / `u scene` / `u asset` commands drive the editor directly with no script. Reach for an editor script when the change is structural or repetitive — uGUI hierarchies, prefab variants, bulk wiring.
 - **Editor scripts must always end with `EditorSceneManager.SaveScene` (or `PrefabUtility.SaveAsPrefabAsset` for prefabs).** Treat "no dirty scenes/assets at script exit" as a hard postcondition.
   - Scene: `EditorSceneManager.SaveScene(scene, path)` (new) or `EditorSceneManager.SaveScene(scene)` (existing). The return value is `true` on success.
   - Prefab: `PrefabUtility.SaveAsPrefabAsset(go, path)`. When editing via `LoadPrefabContents`, always pair with `SaveAsPrefabAsset` → `UnloadPrefabContents`.
   - When the script also creates side-effect assets (Materials, ScriptableObjects, etc.), call `AssetDatabase.SaveAssets()` after the per-object saves to flush pending writes.
-- Before running an editor script, check if the editor is in Play Mode using the `mcp__jetbrains__unity_play_control` tool. If it is, stop it first — Play Mode may skip recompilation, leaving stale code active.
-- After modifying code, confirm compilation success using the `mcp__jetbrains__get_unity_compilation_result` tool before running.
-- **To determine which assembly an editor script belongs to**, run `${CLAUDE_SKILL_DIR}/scripts/resolve-assembly.sh <cs-file-path>`. It walks up directories to find the nearest `.asmdef`; if none is found, it falls back to `Assembly-CSharp-Editor` (path contains `/Editor/`) or `Assembly-CSharp`.
-- **Prefer the `mcp__jetbrains__run_method_in_unity` tool (MCP Server Extension for Unity) for execution.** Define a `public static` method in the script (adding `[MenuItem("Tools/...")]` is optional) and invoke it directly via `mcp__jetbrains__run_method_in_unity`. Only fall back to `execute_run_configuration` or other alternatives when `mcp__jetbrains__run_method_in_unity` is unavailable.
+- Before running an editor script, check whether the editor is in Play Mode (`u -i <instance> state --json` → `isPlaying`); if so, exit it with `u -i <instance> stop` first — Play Mode may skip recompilation, leaving stale code active. (`<instance>` is the target Unity Editor; run `u instances` to list connected editors.)
+- After modifying code, confirm compilation succeeds before running the script. Run the **Quick Verify** sequence: `u -i <instance> console clear` → `u -i <instance> refresh` → poll `u -i <instance> state --json` until `isCompiling` is `false` (≈2 s interval, up to ~30 s) → `u -i <instance> console get -l E,W`. Any error line is a blocker; fix it before running.
+- **Run the editor script via `[MenuItem]` + `u menu exec`.** Add a `[MenuItem("Tools/...")]` attribute to a `public static` parameterless method, then invoke it with `u -i <instance> menu exec 'Tools/...'`. The method's return value is not surfaced — emit results with `Debug.Log(...)` and read them back with `u -i <instance> console get -l L,W,E` after the call. For a method already exposed as `[ContextMenu]` on a Component/ScriptableObject, use `u -i <instance> menu context '<MethodName>' -t <target>` instead. (`u api call` cannot run project-defined types — it is restricted to the `UnityEngine`/`UnityEditor` namespaces.)
 - For uGUI buttons and text, use the **legacy variants** (`UnityEngine.UI.Button` / `UnityEngine.UI.Text`). Do not use TextMeshPro unless the user explicitly requests it.
 - Apply context-menu-equivalent defaults when creating uGUI components (see Resources below).
 
 ## Gotchas
 
-- **Never call two Unity Editor tools in parallel.** `mcp__jetbrains__unity_play_control`, `mcp__jetbrains__get_unity_compilation_result`, `mcp__jetbrains__run_method_in_unity`, and `mcp__jetbrains__run_unity_tests` must be called strictly one at a time — always wait for each call to return before making the next one. Calling them concurrently causes domain-reload conflicts that result in "canceled" or "did not connect within 30 seconds" errors.
-- **When a Unity Editor tool returns `error` or `canceled`, wait 10 seconds before retrying.** Domain reload typically takes several seconds; immediate retry hits the same in-flight reload and fails again. Do not switch tools in the meantime (e.g., calling `mcp__jetbrains__unity_play_control` to verify state) — that just compounds the multiplexed calls. If the same tool returns `error` or `canceled` on two consecutive attempts (with the 10-second wait between them), stop and consult the user instead of retrying further.
+- **Serialize editor commands around compilation and domain reloads.** A `refresh`, `menu exec`, or `tests run` can trigger script recompilation / domain reload; issuing the next command mid-reload fails or returns stale state. Wait for `isCompiling` (and, after `play`, `isPlaying`) to settle via `u -i <instance> state --json` before issuing the next command — do not fire commands back-to-back.
+- **On a failed or empty-looking result, re-check state before retrying.** If a command errors or `console get` is unexpectedly empty, poll `u -i <instance> state --json` until `isCompiling` is `false`, then retry once. If it fails again, stop and consult the user instead of looping.
 - **`.meta` files follow an asymmetric commit rule.** Never create them manually — Unity generates them automatically. Scene/prefab files (`.unity`, `.prefab`) and their referenced assets (materials, SOs, etc.) must be **committed** (required for GUID resolution); editor scripts (`Assets/Editor/*.cs`) and their `.meta` must **not** be committed — orphaned metas break the other checkout if the script is absent. Do not delete them; leave them for the user to remove manually. Do not add them to `.gitignore`; the user excludes them at commit time.
 
 ## Scene lifecycle
@@ -53,4 +53,4 @@ Guide for creating and editing Unity scene files in Unity projects.
 
 ## Troubleshooting
 
-- The `mcp__jetbrains__run_method_in_unity` tool is not available or fails with a connection error: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-run-method-in-unity.md`
+- `u menu exec` fails, the menu path is not found, or the editor is not reachable: Read `${CLAUDE_SKILL_DIR}/resources/troubleshooting-run-editor-script.md`
