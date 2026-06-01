@@ -2,6 +2,9 @@
 
 A [Claude Code](https://claude.ai/code) plugin providing skills and agents for developing Unity projects — maintainable test design and implementation, test-first workflow, coding guidelines, scene editing, and more.
 
+> [!NOTE]
+> This is a fork of [nowsprinting/unity-coding-skills](https://github.com/nowsprinting/unity-coding-skills) by [Koji Hasegawa (@nowsprinting)](https://github.com/nowsprinting). The skills, agents, and guides are his original work, and all credit for the design and content belongs to him. This fork only swaps the Unity Editor backend from JetBrains MCP to [unity-cli](https://github.com/bigdra50/unity-cli) and distributes it under the `bigdra50` marketplace name. The upstream repository remains the canonical source.
+
 ## Included Skills
 
 | Skill                      | Description                                                                                                    | Required                                                                                            |
