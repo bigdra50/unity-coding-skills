@@ -15,7 +15,7 @@ Guide for writing code in Unity projects.
 
 ## Rules
 
-- Before modifying any code file, check whether the editor is in Play Mode (`u -i <instance> state --json` → `isPlaying`); if so, exit it with `u -i <instance> stop` first — Play Mode may skip recompilation, leaving stale code active. (`<instance>` is the target Unity Editor; run `u instances` to list connected editors.)
+- Before modifying any code file, check whether the editor is in Play Mode (`unity command editor_status` → `playMode`); if it is not `stopped`, exit it with `unity command editor_stop` first — Play Mode may skip recompilation, leaving stale code active. (`unity command` reaches the Editor that has the project open through the `com.unity.pipeline` package; from outside the project directory, add `--project-path <path>`.)
 - Never create `.meta` files. Unity editor creates them automatically.
 - When editing (creating or modifying) scene (`.unity`) or prefab (`.prefab`) files, use the `edit-scene` skill.
 

@@ -263,7 +263,7 @@ Without this, `DefaultControls.Create*` uses `new GameObject(...)` internally fo
 
 ## Minimal sample
 
-Editor script that creates a Canvas with a Button under `Assets/Editor/`. Give the entry method a `[MenuItem("Tools/Build Sample Scene")]` and run it with `u -i <instance> menu exec 'Tools/Build Sample Scene'`.
+Editor script that creates a Canvas with a Button under `Assets/Editor/`. Give the entry method a `[MenuItem("Tools/Build Sample Scene")]` and run it with `unity command menu --path 'Tools/Build Sample Scene'`.
 
 ```csharp
 using UnityEditor;
@@ -275,7 +275,7 @@ using UnityEditor.EventSystems;
 
 public static class SceneBuilder
 {
-    // Invoke via: u -i <instance> menu exec 'Tools/Build Sample Scene'
+    // Invoke via: unity command menu --path 'Tools/Build Sample Scene'
     [MenuItem("Tools/Build Sample Scene")]
     public static void Build()
     {

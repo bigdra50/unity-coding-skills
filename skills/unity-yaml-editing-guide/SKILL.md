@@ -28,7 +28,7 @@ Guide for directly editing Unity YAML-serialized asset files for Unity projects.
 - **Quote strings only when they contain non-ASCII characters,** and escape every non-ASCII code point as `\uXXXX` inside double quotes — plain ASCII stays unquoted. Match how Unity itself emits the file.
 - **Use 2-space indent, LF line endings, UTF-8 without BOM, and a trailing newline at EOF.** Tabs, CRLF, or a BOM round-trip badly when Unity re-saves the file.
 - **Do not add comments, YAML aliases (`*name`), extra tags, or chomping indicators (`|`, `>`).** Unity's YAML parser drops or rejects them, and re-save would strip cosmetic formatting anyway — don't bother polishing what Unity will normalize.
-- **After editing, re-import the asset** by running `u -i <instance> refresh`, then confirm a clean import with `u -i <instance> console get -l E,W` (no output = no import/compile errors). Review the diff Unity produces on next save to confirm the edit was accepted as intended. (`<instance>` is the target Unity Editor; run `u instances` to list connected editors.)
+- **After editing, re-import the asset** by running `unity command recompile` (it refreshes the AssetDatabase), then confirm a clean import with `unity command console --level warn` (no entries = no import/compile errors). Review the diff Unity produces on next save to confirm the edit was accepted as intended. (`unity command` reaches the Editor that has the project open through the `com.unity.pipeline` package; from outside the project directory, add `--project-path <path>`.)
 
 ## Gotchas
 

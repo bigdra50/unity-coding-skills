@@ -3,18 +3,18 @@
 A [Claude Code](https://claude.ai/code) plugin providing skills and agents for developing Unity projects — maintainable test design and implementation, test-first workflow, coding guidelines, scene editing, and more.
 
 > [!NOTE]
-> This is a fork of [nowsprinting/unity-coding-skills](https://github.com/nowsprinting/unity-coding-skills) by [Koji Hasegawa (@nowsprinting)](https://github.com/nowsprinting). The skills, agents, and guides are his original work, and all credit for the design and content belongs to him. This fork only swaps the Unity Editor backend from JetBrains MCP to [unity-cli](https://github.com/bigdra50/unity-cli) and distributes it under the `bigdra50` marketplace name. The upstream repository remains the canonical source.
+> This is a fork of [nowsprinting/unity-coding-skills](https://github.com/nowsprinting/unity-coding-skills) by [Koji Hasegawa (@nowsprinting)](https://github.com/nowsprinting). The skills, agents, and guides are his original work, and all credit for the design and content belongs to him. This fork only swaps the Unity Editor backend from JetBrains MCP to the official [Unity CLI](https://docs.unity.com/en-us/unity-cli) (`unity command`) and distributes it under the `bigdra50` marketplace name. The upstream repository remains the canonical source.
 
 ## Included Skills
 
 | Skill                      | Description                                                                                                    | Required                                                                                            |
 |----------------------------|----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
 | `code-writing-guide`       | Coding conventions and guidelines for Unity C# projects                                                        |                                                                                                     |
-| `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                                              | [unity-cli](https://github.com/bigdra50/unity-cli) (`u`) + a running Unity Editor via the Relay Server |
+| `edit-scene`               | Creates and modifies `.unity` and `.prefab` files                                                              | [Unity CLI](https://docs.unity.com/en-us/unity-cli) (`unity`) + `com.unity.pipeline` in a running Unity Editor |
 | `fix-bug`                  | Diagnoses and fixes bugs using a test-first workflow (reproduce, diagnose, fix)                                |                                                                                                     |
 | `plan-feature`             | Orchestrates the test-first planning workflow for feature implementation in plan mode                          |                                                                                                     |
 | `refine-tests`             | Reviews existing test code for conformance to the test design and writing guides, then plans the refinement    |                                                                                                     |
-| `run-tests`                | Running Unity tests via `u tests run`                                                                          | [unity-cli](https://github.com/bigdra50/unity-cli) (`u`) + a running Unity Editor via the Relay Server |
+| `run-tests`                | Running Unity tests via `unity command run_tests`                                                              | [Unity CLI](https://docs.unity.com/en-us/unity-cli) (`unity`) + `com.unity.pipeline` in a running Unity Editor |
 | `test-designing-guide`     | Design maintainable test cases; reduce redundant tests, tests without assertions, and unnecessary test doubles |                                                                                                     |
 | `test-writing-guide`       | Conventions for writing Unity Test Framework test code                                                         | [Test Helper](https://github.com/nowsprinting/test-helper) and [UI Test Helper](https://github.com/nowsprinting/test-helper.ui) package |
 | `unity-yaml-editing-guide` | Guidelines for directly hand-editing Unity YAML asset files                                                    |                                                                                                     |
@@ -54,20 +54,20 @@ Commit the resulting `.claude/settings.json` to your repository.
 
 ## Recommended Project Settings
 
-### 1. unity-cli (Unity Editor backend)
+### 1. Unity CLI (Unity Editor backend)
 
-Most skills drive the Unity Editor through [unity-cli](https://github.com/bigdra50/unity-cli) — the `u` command — which talks to a running Editor over a local Relay Server (TCP:6500).
+Most skills drive the Unity Editor through the official [Unity CLI](https://docs.unity.com/en-us/unity-cli) — `unity command <name>` — which talks to the Editor that has the project open through the `com.unity.pipeline` package.
 
-1. Install `unity-cli` and put the `u` command on your `PATH` (see the unity-cli README).
-2. Start the Relay Server: `unity-relay --port 6500` (override the port with `UNITY_RELAY_PORT`).
-3. Open your Unity project in the Editor, then confirm the connection:
+1. Install the Unity CLI so the `unity` command is on your `PATH`.
+2. Add the pipeline package to the project once: `unity pipeline install`.
+3. Open your Unity project in the Editor, then confirm the connection from the project directory:
 
 ```shell
-u instances            # list connected Editors
-u -i <project> state   # play mode / compilation / active scene of one Editor
+unity command editor_status   # status / compiling / playMode of the Editor
+unity command --query test    # list the available commands, filtered
 ```
 
-`<instance>` in the skill docs is the target Editor — a project name, path, or unique prefix from `u instances`. When several Editors are connected, always pass `-i <instance>` so commands reach the right one.
+Commands target the project detected from the working directory. From elsewhere, add `--project-path <path>`.
 
 ### 2. Diagnostics tooling (jb / unilyze)
 
